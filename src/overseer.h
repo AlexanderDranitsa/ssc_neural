@@ -7,9 +7,6 @@
 SC_MODULE(OVERSEER)
 {
     sc_in<bool>  clk_i;
-    sc_out<int>  addr_bo;
-    sc_in<int>   data_bi;
-    sc_out<int>  data_bo;
     sc_out<bool> req_write;
     sc_out<bool> req_read;
 
@@ -24,7 +21,7 @@ SC_MODULE(OVERSEER)
     void mainThread();
 private:
 
-    void bus_write(int addr, int data);
+    void bus_write(int addr, float data);
     int  bus_read(int addr);
 
 };

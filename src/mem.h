@@ -7,9 +7,6 @@
 SC_MODULE(Mem)
 {
     sc_in<bool>  clk_i;
-    sc_in<int>   addr_bi;
-    sc_in<int>   data_bi;
-    sc_out<int>  data_bo;
     sc_in<bool>  bus_is_set;
     sc_in<bool>  read_pending;
 
@@ -22,8 +19,10 @@ SC_MODULE(Mem)
     void bus_read();
 
 private:
-    bool ipnut[49];
-    bool reference[3];
+    int config[LAYERS] = CONFIG;
+    float* vectors[LAYERS + 2];
+    float* backprop[LAYERS - 1];
+    float reference[3];
 };
 
 #endif

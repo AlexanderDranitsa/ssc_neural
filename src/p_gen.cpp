@@ -4,8 +4,7 @@ P_GEN::P_GEN(sc_module_name nm)
     :sc_module(nm),
     clk_i("clk_i"),
     request("request"),
-    done("done"),
-    vector("vector", 49)
+    done("done")
     // data_bo("data_bo"),
     // addr_bo("data_bo"),
     // bus_is_set("bus_is_set"),
@@ -74,8 +73,8 @@ void P_GEN::vector_write()
 {   harass();
     cout << "  MY MY MY PGEN: " << endl;
     for (int i = 0; i < 49; i++){
-        vector[i].write(fig[i]); 
-        cout << std::hex << vector[i];
+        //vector[i].write(fig[i]); 
+        //cout << std::hex << vector[i];
     }
     cout << endl;
     for (int i = 0; i < 3; i++){

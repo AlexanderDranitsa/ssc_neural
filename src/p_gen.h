@@ -11,7 +11,6 @@ SC_MODULE(P_GEN)
     sc_in<bool>  clk_i;
     sc_in<bool>   request;
     sc_out<bool>  done;
-    sc_vector< sc_out<bool> > vector;
     // sc_out<int>  data_bo;
     // sc_out<int>  addr_bo;
     // sc_in<bool>  bus_is_set;
@@ -52,8 +51,8 @@ private:
         0, 0, 1, 1, 1, 0, 0,
         0, 0, 0, 0, 0, 0, 0
     };
-    bool fig[49];
-    bool ref[3] = {0};
+    int fig[49];
+    int ref[3] = {0};
 };
 
 #endif
