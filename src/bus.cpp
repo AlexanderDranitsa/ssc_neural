@@ -20,12 +20,25 @@ BUS::~BUS()
 
 void BUS::transmit()
 {
-    if (in_req_read[0].read()){
+    int is_read = 0;
+    int is_write = 0;
+    for (int i = 0; i < LAYERS + 2; i++){
+        if(in_req_read[i].read()){
+            is_read = 1;
+            break;
+        } else if (in_req_write[i].read()){
+            is_write = 1;
+            break;
+        }
+    }
+    if (is_read){
         out_req_read.write(1);
         out_req_write.write(0);
-    } else if (in_req_write[0].read()){
+        is_read = 0;
+    } else if (is_write){
         out_req_write.write(1);
         out_req_read.write(0);
+        is_write = 0;
     } else {
         out_req_read.write(0);
         out_req_write.write(0);

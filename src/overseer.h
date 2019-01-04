@@ -11,7 +11,6 @@ SC_MODULE(OVERSEER)
     sc_out<bool> req_read;
 
     sc_out<bool> get_pat;
-    sc_in<bool> pat_ready;
 
     SC_HAS_PROCESS(OVERSEER);
 

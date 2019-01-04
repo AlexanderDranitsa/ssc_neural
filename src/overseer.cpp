@@ -7,8 +7,7 @@ OVERSEER::OVERSEER(sc_module_name nm)
     clk_i("clk_i"),
     req_write("req_write"),
     req_read("req_read"),
-    get_pat("get_pat"),
-    pat_ready("pat_ready")
+    get_pat("get_pat")
 {
     req_write.initialize(0);
     req_read.initialize(0);
@@ -23,26 +22,24 @@ OVERSEER::~OVERSEER()
 
 void OVERSEER::mainThread()
 {
-    int set_size = SET_SIZE;
-
-    for(int i = 0; i < set_size; i++)
+    for(int i = 0; i < SET_SIZE; i++)
     {
         bus_write(i, shared_d);
     }
 
-    for(int i = 0; i < set_size; i++)
+    for(int i = 0; i < SET_SIZE; i++)
     {
         bus_read(i);
     }
 
     shared_d = 123.456;
 
-    for(int i = 0; i < set_size; i++)
+    for(int i = 0; i < SET_SIZE; i++)
     {
         bus_write(i, shared_d);
     }
 
-    for(int i = 0; i < set_size; i++)
+    for(int i = 0; i < SET_SIZE; i++)
     {
         bus_read(i);
     }
@@ -53,18 +50,19 @@ void OVERSEER::mainThread()
 int OVERSEER::bus_read(int addr)
 {
     float data;
+    shared_a = addr;
     req_read.write(1);
     wait();
     req_read.write(0);
 
     wait();
-    data = shared_d;
+
     get_pat.write(1);
     wait();
     get_pat.write(0);
     cout << "OVERSEER: READ " << endl;
-    cout << "  -> addr: " << hex << addr << endl;
-    cout << "  -> data: " << hex << data << endl;
+    cout << "  -> addr: " << shared_a << endl;
+    cout << "  -> data: " << shared_d << endl;
 
     return data;
 }
@@ -80,6 +78,6 @@ void OVERSEER::bus_write(int addr, float data)
     req_write.write(0);
     
     cout << "OVERSEER: WRITE " << endl;
-    cout << "  -> addr: " << hex << shared_a << endl;
-    cout << "  -> data: " << hex << shared_d << endl;
+    cout << "  -> addr: " << shared_a << endl;
+    cout << "  -> data: " << shared_d << endl;
 }

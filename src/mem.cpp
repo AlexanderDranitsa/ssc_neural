@@ -17,15 +17,15 @@ Mem::Mem(sc_module_name nm)
         } else if (i == LAYERS + 1){
             vectors[i] =  new float [OUTPUT_LENGTH];
         } else {
-            cout << config[i - 1] << endl;
+            //cout << config[i - 1] << endl;
             vectors[i] =  new float [config[i - 1]];
         }
     }
 
     for (int i = 1; i < LAYERS; i++){
-        cout << i - 1 << endl;
+        //cout << i - 1 << endl;
         backprop[i - 1] =  new float [config[i]];
-        cout << config[i] << endl;
+        //cout << config[i] << endl;
     }
 }
 
@@ -36,39 +36,43 @@ Mem::~Mem()
 void Mem::bus_read()
 {
     if(bus_is_set.read()){
-        cout << "FROMBUS REEEEAAAAAAAADDDDDDDDDDDDD" << endl;
         int index = (shared_a % 100);
         int layer = (shared_a % 1000) - index;
         int mode  = (shared_a % 10000) - layer;
-        cout << shared_a << endl;
-        if (mode == 0){
-            reference[index] = shared_d;
-        }
-        if (mode == 1){
-            vectors[layer][index] = shared_d;
-        }
-        if (mode == 2){
-            backprop[layer][index] = shared_d;
-        }
+        cout << "MEM: READ " << endl;
+        cout << "  -> addr: " << shared_a << endl;
+        cout << "  -> data: " << shared_d << endl;
+        reference[0] = shared_d;
+        // if (mode == 0){
+        //     reference[index] = shared_d;
+        // }
+        // if (mode == 1){
+        //     vectors[layer][index] = shared_d;
+        // }
+        // if (mode == 2){
+        //     backprop[layer][index] = shared_d;
+        // }
     }
 }
 
 void Mem::bus_write()
 {
     if(read_pending.read()){
-        cout << "FROMBUS WWWWWRRRRRRRRRRIIIIIIIIITE" << endl;
         int index = (shared_a % 100);
         int layer = (shared_a % 1000) - index;
         int mode  = (shared_a % 10000) - layer;
-        cout << shared_a << endl;
-        if (mode == 0){
-            shared_d = reference[index];
-        }
-        if (mode == 1){
-            shared_d = vectors[layer][index];
-        }
-        if (mode == 2){
-            shared_d = backprop[layer][index];
-        }
+        // if (mode == 0){
+        //     shared_d = reference[index];
+        // }
+        // if (mode == 1){
+        //     shared_d = vectors[layer][index];
+        // }
+        // if (mode == 2){
+        //     shared_d = backprop[layer][index];
+        // }
+        shared_d = reference[0];
+        cout << "MEM: WRITE " << endl;
+        cout << "  -> addr: " << shared_a << endl;
+        cout << "  -> data: " << shared_d << endl;
     }
 }

@@ -5,7 +5,7 @@
 #define CONFIG { 3, 4, 5 }
 
 #define HARASS_LVL 0
-#define SET_SIZE 10
+#define SET_SIZE 5
 
 #define IMG_SIZE 7
 #define INPUT_LENGTH (IMG_SIZE * IMG_SIZE)

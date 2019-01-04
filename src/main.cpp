@@ -36,15 +36,13 @@ int sc_main(int argc, char* argv[])
     BUS.in_req_write(write_bus);
 
     OVERSEER.get_pat(get_pat);
-    OVERSEER.pat_ready(pat_ready);
 
     gen.request(get_pat);
-    gen.done(pat_ready);
     gen.clk_i(clk);
 
     memory.clk_i(clk);
-    memory.bus_is_set(bus_to_mem_read_req);
-    memory.read_pending(bus_to_mem_write_req);
+    memory.bus_is_set(bus_to_mem_write_req);
+    memory.read_pending(bus_to_mem_read_req);
 
     sc_trace_file *wf = sc_create_vcd_trace_file("wave");
     sc_trace(wf, clk, "clk");

@@ -3,20 +3,11 @@
 P_GEN::P_GEN(sc_module_name nm)
     :sc_module(nm),
     clk_i("clk_i"),
-    request("request"),
-    done("done")
-    // data_bo("data_bo"),
-    // addr_bo("data_bo"),
-    // bus_is_set("bus_is_set"),
+    request("request")
 {
-    //data_bo.initialize(0);
-
     SC_METHOD(harass);
-
     SC_METHOD(vector_write);
     sensitive << request.pos();
-    //sensitive << clk_i.pos();
-
 }
 
 P_GEN::~P_GEN()
@@ -73,13 +64,10 @@ void P_GEN::vector_write()
 {   harass();
     cout << "  MY MY MY PGEN: " << endl;
     for (int i = 0; i < 49; i++){
-        //vector[i].write(fig[i]); 
-        //cout << std::hex << vector[i];
+        cout << std::hex << fig[i];
     }
     cout << endl;
     for (int i = 0; i < 3; i++){
         cout << std::dec << ref[i];
     }
-
-        //data_bo.write(fig);
 }
