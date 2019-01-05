@@ -12,7 +12,7 @@ int sc_main(int argc, char* argv[])
     shared_d = 777.888;
     OVERSEER OVERSEER("OVERSEER");
     Mem memory("memory");
-    P_GEN gen("P_GEN");
+    P_GEN P_GEN("P_GEN");
     BUS BUS("BUS");
 
     sc_clock clk("clk", sc_time(10, SC_NS));
@@ -20,7 +20,7 @@ int sc_main(int argc, char* argv[])
     sc_vector< sc_signal<bool> > write_bus("write_bus", LAYERS + 2);
 
     sc_signal<bool> get_pat;
-    sc_signal<bool> pat_ready;
+    sc_signal<bool> done;
 
     sc_signal<bool> bus_to_mem_read_req;
     sc_signal<bool> bus_to_mem_write_req;
@@ -36,9 +36,12 @@ int sc_main(int argc, char* argv[])
     BUS.in_req_write(write_bus);
 
     OVERSEER.get_pat(get_pat);
+    OVERSEER.done(done);
 
-    gen.request(get_pat);
-    gen.clk_i(clk);
+    P_GEN.done(done);
+    P_GEN.request(get_pat);
+    P_GEN.clk_i(clk);
+    P_GEN.req_write(write_bus[1]);
 
     memory.clk_i(clk);
     memory.bus_is_set(bus_to_mem_write_req);

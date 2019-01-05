@@ -7,7 +7,8 @@ OVERSEER::OVERSEER(sc_module_name nm)
     clk_i("clk_i"),
     req_write("req_write"),
     req_read("req_read"),
-    get_pat("get_pat")
+    get_pat("get_pat"),
+    done("done")
 {
     req_write.initialize(0);
     req_read.initialize(0);
@@ -22,27 +23,23 @@ OVERSEER::~OVERSEER()
 
 void OVERSEER::mainThread()
 {
-    for(int i = 0; i < SET_SIZE; i++)
-    {
-        bus_write(i, shared_d);
+    get_pat.write(1);
+    wait();
+    get_pat.write(0);
+    while (done.read() == 0){
+        wait();
     }
+    cout << "HERE2" << endl;
 
-    for(int i = 0; i < SET_SIZE; i++)
-    {
-        bus_read(i);
-    }
+    // for(int i = 0; i < SET_SIZE; i++)
+    // {
+    //     bus_write(i, shared_d);
+    // }
 
-    shared_d = 123.456;
-
-    for(int i = 0; i < SET_SIZE; i++)
-    {
-        bus_write(i, shared_d);
-    }
-
-    for(int i = 0; i < SET_SIZE; i++)
-    {
-        bus_read(i);
-    }
+    // for(int i = 0; i < SET_SIZE; i++)
+    // {
+    //     bus_read(i);
+    // }
 
     sc_stop();
 }
@@ -57,9 +54,6 @@ int OVERSEER::bus_read(int addr)
 
     wait();
 
-    get_pat.write(1);
-    wait();
-    get_pat.write(0);
     cout << "OVERSEER: READ " << endl;
     cout << "  -> addr: " << shared_a << endl;
     cout << "  -> data: " << shared_d << endl;
@@ -69,7 +63,6 @@ int OVERSEER::bus_read(int addr)
 
 void OVERSEER::bus_write(int addr, float data)
 {
-    wait();
     shared_a = addr;
     shared_d = data;
     req_write.write(1);

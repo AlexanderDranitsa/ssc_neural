@@ -14,7 +14,7 @@
 extern float shared_d;
 extern int shared_a;
 
-#define GENERATED 1
-#define REFERENCE 2
+#define REFERENCE     0
+#define INPUT      1000
 
 #endif

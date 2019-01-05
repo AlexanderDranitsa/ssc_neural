@@ -7,6 +7,7 @@
 SC_MODULE(OVERSEER)
 {
     sc_in<bool>  clk_i;
+    sc_in<bool>  done;
     sc_out<bool> req_write;
     sc_out<bool> req_read;
 
