@@ -36,10 +36,10 @@ void OVERSEER::mainThread()
     //     bus_write(i, shared_d);
     // }
 
-    // for(int i = 0; i < SET_SIZE; i++)
-    // {
-    //     bus_read(i);
-    // }
+    for(int i = 0; i < INPUT_LENGTH; i++)
+    {
+        bus_read(1000 + i);
+    }
 
     sc_stop();
 }
