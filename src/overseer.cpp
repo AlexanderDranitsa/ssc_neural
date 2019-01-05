@@ -26,22 +26,22 @@ void OVERSEER::mainThread()
     get_pat.write(1);
     wait();
     get_pat.write(0);
+    
     while (done.read() == 0){
         wait();
     }
     wait();
-    wait();
-    wait();
-    cout << "REFERENCE~~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
-    for(int i = 0; i < 3; i++)
-    {
-        bus_read(i);
-    }
-    cout << "VECTOR~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
-    for(int i = 0; i < INPUT_LENGTH; i++)
-    {
-        bus_read(1000 + i);
-    }
+
+    // cout << "REFERENCE~~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
+    // for(int i = 0; i < 3; i++)
+    // {
+    //     bus_read(i);
+    // }
+    // cout << "VECTOR~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
+    // for(int i = 0; i < INPUT_LENGTH; i++)
+    // {
+    //     bus_read(1000 + i);
+    // }
 
     sc_stop();
 }

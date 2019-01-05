@@ -30,9 +30,8 @@ void P_GEN::gen()
             for (int i = 0; i < 3; i++){
                 ref[i] = 0;
             }
-
+        srand(time(NULL));
         int rnd = rand();
-        cout << "  RND: " << std::dec << rnd << endl;
         if ((rnd % 9) <= 3) {
             for (int i = 0; i < 49; i++){
                 fig[i] = m_round[i];
@@ -49,7 +48,6 @@ void P_GEN::gen()
             }
             ref[0]= 1;
         }
-
         int i = HARASS_LVL;
         while(i){
             int rnd= rand() % 49;
