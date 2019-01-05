@@ -7,6 +7,9 @@ P_GEN::P_GEN(sc_module_name nm)
     req_write("req_write"),
     done("done")
 {
+    req_write.initialize(0);
+    done.initialize(0);
+
     SC_METHOD(gen);
     sensitive << clk_i.pos();
 }
@@ -64,19 +67,28 @@ void P_GEN::gen()
             }
         }
         counter = 0;
-        flag = 1;
+        flag_v = 1;
+        flag_r = 1;
     }
-    if (flag){
-        shared_a = INPUT+counter;
+    if (flag_v){
+        shared_a = INPUT - 1 +counter;
         shared_d = fig[counter];
         cout << "ADDR: " << shared_a << " DATA: " << shared_d << endl;
         req_write.write(1);
-        next_trigger();
         counter++;
-        if (counter == 49){
-            flag = 0;
+        if (counter == INPUT_LENGTH + 1){
+            flag_v = 0;
             counter = 0;
-            cout << "HERE1" << endl;
+        }
+    } else if (flag_r) {
+        shared_a = REFERENCE+counter;
+        shared_d = ref[counter];
+        cout << "ADDR: " << shared_a << " DATA: " << shared_d << endl;
+        req_write.write(1);
+        counter++;
+        if (counter == 3){
+            flag_r = 0;
+            counter = 0;
             done.write(1);
         }
     }

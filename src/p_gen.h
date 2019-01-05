@@ -21,7 +21,8 @@ SC_MODULE(P_GEN)
     void bus_write();
 
 private:
-    int flag = 0;
+    int flag_v = 0;
+    int flag_r = 0;
     int counter = 0;
     const int m_triangle[49] = {
         0, 0, 0, 0, 0, 0, 0,

@@ -43,15 +43,15 @@ void Mem::bus_read()
         cout << "  -> addr: " << shared_a << endl;
         cout << "  -> data: " << shared_d << endl;
         if (mode == 0){
-            cout << "REF" << endl;
+            //cout << "REF" << endl;
             reference[index] = shared_d;
         }
         if (mode == 1){
-            cout << "VEC" << endl;
+            //cout << "VEC" << endl;
             vectors[layer][index] = shared_d;
         }
         if (mode == 2){
-            cout << "BP" << endl;
+            //cout << "BP" << endl;
             backprop[layer][index] = shared_d;
         }
     }
@@ -60,20 +60,19 @@ void Mem::bus_read()
 void Mem::bus_write()
 {
     if(read_pending.read()){
-        cout << "SHARED ADDR " << shared_a <<endl;
         int index = (shared_a % 100);
         int layer = (shared_a / 100) % 10;
         int mode  = (shared_a / 1000) % 10;
         if (mode == 0){
-            cout << "REF" << endl;
+            //cout << "REF" << endl;
             shared_d = reference[index];
         }
         if (mode == 1){
-            cout << "VEC" << endl;
+            //cout << "VEC" << endl;
             shared_d = vectors[layer][index];
         }
         if (mode == 2){
-            cout << "BP" << endl;
+            //cout << "BP" << endl;
             shared_d = backprop[layer][index];
         }
         cout << "~MEM: WRITE " << endl;

@@ -29,13 +29,15 @@ void OVERSEER::mainThread()
     while (done.read() == 0){
         wait();
     }
-    cout << "HERE2" << endl;
-
-    // for(int i = 0; i < SET_SIZE; i++)
-    // {
-    //     bus_write(i, shared_d);
-    // }
-
+    wait();
+    wait();
+    wait();
+    cout << "REFERENCE~~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
+    for(int i = 0; i < 3; i++)
+    {
+        bus_read(i);
+    }
+    cout << "VECTOR~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
     for(int i = 0; i < INPUT_LENGTH; i++)
     {
         bus_read(1000 + i);
