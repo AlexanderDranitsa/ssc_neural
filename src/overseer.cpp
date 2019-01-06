@@ -27,14 +27,14 @@ OVERSEER::~OVERSEER()
 
 void OVERSEER::mainThread()
 {
-    // get_pat.write(1);
-    // wait();
-    // get_pat.write(0);
+    get_pat.write(1);
+    wait();
+    get_pat.write(0);
     
-    // while (done.read() == 0){
-    //     wait();
-    // }
-    // wait();
+    while (done.read() == 0){
+        wait();
+    }
+    wait();
 
     forward_start.write(1);
     wait();
@@ -45,14 +45,14 @@ void OVERSEER::mainThread()
     }
     cout << "FROM OVERSEER FWD DONE " << endl<< endl<< endl;
 
-    backward_start.write(1);
-    wait();
-    backward_start.write(0);
+    // backward_start.write(1);
+    // wait();
+    // backward_start.write(0);
 
-    while (backward_done.read() == 0){
-        wait();
-    }
-    cout << "FROM OVERSEER BCKWRD DONE " << endl<< endl<< endl;
+    // while (backward_done.read() == 0){
+    //     wait();
+    // }
+    // cout << "FROM OVERSEER BCKWRD DONE " << endl<< endl<< endl;
     // cout << "REFERENCE~~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
     // for(int i = 0; i < 3; i++)
     // {

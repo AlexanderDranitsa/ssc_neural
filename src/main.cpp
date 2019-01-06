@@ -62,8 +62,19 @@ int sc_main(int argc, char* argv[])
 
     LAYER* layers_arr[LAYERS];
 
-    for (int i = 0; i < LAYERS; i++){
-        layers_arr[i] = new LAYER("layer", i);
+    int cfg[LAYERS] = CONFIG;
+    for (int prev, next, i = 0; i < LAYERS; i++){
+        if (i == 0){
+            prev = INPUT_LENGTH;
+        } else {
+            prev = cfg[i - 1];
+        }
+        if (i == LAYERS - 1){
+            next = 3;
+        } else {
+            next = cfg[i];
+        }
+        layers_arr[i] = new LAYER("layer", i + 1, prev, next);
         layers_arr[i]->clk_i(clk);
         layers_arr[i]->write_req(write_bus[i+2]);
         layers_arr[i]->read_req(read_bus[i+2]);

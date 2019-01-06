@@ -16,12 +16,22 @@ SC_MODULE(LAYER)
 
     SC_HAS_PROCESS(LAYER);
 
-    LAYER(sc_module_name nm, int number);
+    LAYER(sc_module_name nm, int curr, int prev, int next);
     ~LAYER();
 
-    int number;
-
     void compute();
+    int curr;
+    int prev;
+    int next;
+    int input_v_flag = 0;
+    int output_v_flag = 0;
+    int prev_got = 0;
+    int counter = 0;
+    int addr_buf = 0;
+    bool was_request;
+    float* input = new float[prev];
+    float* output = new float[next];
+
 
 private:
 };
