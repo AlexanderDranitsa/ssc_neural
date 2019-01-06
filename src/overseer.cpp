@@ -5,6 +5,10 @@ using namespace std;
 OVERSEER::OVERSEER(sc_module_name nm)
     :sc_module(nm),
     clk_i("clk_i"),
+    // forward_done("forward_done"),
+    // backward_done("backward_done"),
+    // forward_start("forward_start"),
+    // backward_start("backward_start"),
     req_write("req_write"),
     req_read("req_read"),
     get_pat("get_pat"),
