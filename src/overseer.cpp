@@ -36,6 +36,13 @@ void OVERSEER::mainThread()
     }
     wait();
 
+    for(int i = 0; i < 3; i++)
+    {
+        bus_read(i);
+        ref[i] = shared_d;
+    }
+    cout << ref[0] << ref[1] << ref[2] << endl;
+
     forward_start.write(1);
     wait();
     forward_start.write(0);
@@ -45,43 +52,62 @@ void OVERSEER::mainThread()
     }
     cout << "FROM OVERSEER FWD DONE " << endl<< endl<< endl;
 
-    // backward_start.write(1);
-    // wait();
-    // backward_start.write(0);
+    wait();
 
-    // while (backward_done.read() == 0){
-    //     wait();
-    // }
-    // cout << "FROM OVERSEER BCKWRD DONE " << endl<< endl<< endl;
-    // cout << "REFERENCE~~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
-    // for(int i = 0; i < 3; i++)
-    // {
-    //     bus_read(i);
-    // }
-    // cout << "VECTOR~~~~~~~~~~~~~~~~~~~~" << endl<< endl<< endl;
-    // for(int i = 0; i < INPUT_LENGTH; i++)
-    // {
-    //     bus_read(1000 + i);
-    // }
+    for(int i = 0; i < 3; i++)
+    {
+        bus_read(1000 + LAYERS * 100 + i);
+        out[i] = shared_d;
+    }
+
+    cout << out[0] << " " << out[1] << " " << out[2] << " " << endl;
+
+    float max_ref[2] = {0, ref[0]};
+    float max_out[2] = {0, out[0]};
+
+    for (int i = 1; i < 3; i++){
+        if (ref[i] > max_ref[1]){
+            max_ref[0] = i;
+            max_ref[1] = ref[i];
+        }
+        if (out[i] > max_out[1]){
+            max_out[0] = i;
+            max_out[1] = out[i];
+        }
+    }
+
+    cout << max_ref[0] << " " << max_ref[1] << endl;
+    cout << max_out[0] << " " << max_out[1] << endl;
+
+    if (max_ref[0] != max_out[0]){
+        cout << "MISTAKE, START BACKPROP" << endl;
+    } else {
+        cout << "GOOD" << endl;
+    }
+
+    backward_start.write(1);
+    wait();
+    backward_start.write(0);
+
+    while (backward_done.read() == 0){
+        wait();
+    }
+    cout << "FROM OVERSEER BCKWRD DONE " << endl<< endl<< endl;
 
     sc_stop();
 }
 
 int OVERSEER::bus_read(int addr)
 {
-    float data;
     shared_a = addr;
     req_read.write(1);
     wait();
     req_read.write(0);
-
     wait();
 
     cout << "OVERSEER: READ " << endl;
-    cout << "  -> addr: " << shared_a << endl;
+    cout << "  -> addr: " << shared_a - 0xf000<< endl;
     cout << "  -> data: " << shared_d << endl;
-
-    return data;
 }
 
 void OVERSEER::bus_write(int addr, float data)
