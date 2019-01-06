@@ -4,8 +4,6 @@
 #include "defines.h"
 #include "bus.h"
 #include "layer.h"
-#include <string.h>
-
 
 float shared_d;
 int shared_a;
@@ -22,7 +20,7 @@ int sc_main(int argc, char* argv[])
     sc_vector< sc_signal<bool> > write_bus("write_bus", LAYERS + 2);
 
     sc_vector< sc_signal<bool> > forward_bus("forward_bus",  LAYERS - 1 );
-    sc_vector< sc_signal<bool> > backprop_bus("backprop_bus", LAYERS -1 );
+    sc_vector< sc_signal<bool> > backprop_bus("backprop_bus", LAYERS - 1 );
 
     sc_signal<bool> get_pat;
     sc_signal<bool> done;
@@ -48,10 +46,10 @@ int sc_main(int argc, char* argv[])
 
     OVERSEER.get_pat(get_pat);
     OVERSEER.done(done);
-    // OVERSEER.forward_done(forward_done);
-    // OVERSEER.backward_done(backward_done);
-    // OVERSEER.forward_start(forward_start);
-    // OVERSEER.backward_start(backward_start);
+    OVERSEER.forward_done(forward_done);
+    OVERSEER.forward_start(forward_start);
+    OVERSEER.backward_done(backward_done);
+    OVERSEER.backward_start(backward_start);
 
     P_GEN.done(done);
     P_GEN.request(get_pat);
@@ -65,32 +63,32 @@ int sc_main(int argc, char* argv[])
     LAYER* layers_arr[LAYERS];
 
     for (int i = 0; i < LAYERS; i++){
-        layers_arr[i] = new LAYER("layer");
+        layers_arr[i] = new LAYER("layer", i);
         layers_arr[i]->clk_i(clk);
         layers_arr[i]->write_req(write_bus[i+2]);
         layers_arr[i]->read_req(read_bus[i+2]);
         // FWD
-        // if (i == 0){
-        //     layers_arr[i]->forward_in(forward_start);
-        //     layers_arr[i]->forward_out(forward_bus[0]);
-        // } else if (i == LAYERS - 1){
-        //     layers_arr[i]->forward_out(forward_done);
-        //     layers_arr[i]->forward_in(forward_bus[LAYERS - 1]);
-        // } else {
-        //     layers_arr[i]->forward_out(forward_bus[i]);
-        //     layers_arr[i]->forward_in(forward_bus[i - 1]);
-        // }
+        if (i == 0){
+            layers_arr[i]->forward_in(forward_start);
+            layers_arr[i]->forward_out(forward_bus[0]);
+        } else if (i == LAYERS - 1){
+            layers_arr[i]->forward_out(forward_done);
+            layers_arr[i]->forward_in(forward_bus[LAYERS - 2]);
+        } else {
+            layers_arr[i]->forward_out(forward_bus[i]);
+            layers_arr[i]->forward_in(forward_bus[i - 1]);
+        }
         // // BACKPROP
-        // if (i == 0){
-        //     layers_arr[i]->backward_in(backprop_bus[LAYERS - 1]);
-        //     layers_arr[i]->backward_out(backward_done);
-        // } else if (i == LAYERS - 1){
-        //     layers_arr[i]->backward_out(backprop_bus[0]);
-        //     layers_arr[i]->backward_in(backward_start);
-        // } else {
-        //     layers_arr[i]->backward_out(backprop_bus[i]);
-        //     layers_arr[i]->backward_in(backprop_bus[i - 1]);
-        // }
+        if (i == 0){
+            layers_arr[i]->backward_in(backprop_bus[LAYERS - 2]);
+            layers_arr[i]->backward_out(backward_done);
+        } else if (i == LAYERS - 1){
+            layers_arr[i]->backward_out(backprop_bus[0]);
+            layers_arr[i]->backward_in(backward_start);
+        } else {
+            layers_arr[i]->backward_out(backprop_bus[i]);
+            layers_arr[i]->backward_in(backprop_bus[i - 1]);
+        }
     }
 
     sc_trace_file *wf = sc_create_vcd_trace_file("wave");
