@@ -3,6 +3,7 @@
 
 #include "systemc.h"
 #include "defines.h"
+#include <cstdlib>
 
 SC_MODULE(LAYER)
 {
@@ -28,7 +29,10 @@ SC_MODULE(LAYER)
     int prev_got = 0;
     int counter = 0;
     int addr_buf = 0;
-    bool was_request;
+    int wait = 0;
+    bool compute_flag = 0;
+    bool was_request = 0;
+    float** weights = new float*[next];
     float* input = new float[prev];
     float* output = new float[next];
 
