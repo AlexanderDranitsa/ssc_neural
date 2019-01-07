@@ -22,10 +22,9 @@ Mem::Mem(sc_module_name nm)
         }
     }
 
-    for (int i = 1; i < LAYERS; i++){
-        //cout << i - 1 << endl;
-        backprop[i - 1] =  new float [config[i]];
-        //cout << config[i] << endl;
+    for (int i = 0; i < LAYERS - 1; i++){
+        backprop[i] =  new float [config[i]];
+        //cout << "BP #" <<i << " SIZEOF = " << config[i] << endl;
     }
 }
 

@@ -26,6 +26,8 @@ SC_MODULE(OVERSEER)
     void mainThread();
     float ref[3];
     float out[3];
+    int good = 0;
+    int bad = 0;
 private:
 
     void bus_write(int addr, float data);
