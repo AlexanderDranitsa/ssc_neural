@@ -6,17 +6,15 @@
 
 SC_MODULE(OVERSEER)
 {
-    sc_in<bool>  clk_i;
-    sc_in<bool>  done;
-    sc_out<bool> req_write;
-    sc_out<bool> req_read;
-
+    sc_in  <bool>    clk_i;
+    sc_in  <bool>    done;
+    sc_out <bool>    req_write;
+    sc_out <bool>    req_read;
     sc_in  <bool>    forward_done;
-    sc_out <bool>   forward_start;
-    sc_in  <bool>   backward_done;
-    sc_out <bool>  backward_start;
-
-    sc_out<bool> get_pat;
+    sc_out <bool>    forward_start;
+    sc_in  <bool>    backward_done;
+    sc_out <bool>    backward_start;
+    sc_out <bool>    get_pat;
 
     SC_HAS_PROCESS(OVERSEER);
 

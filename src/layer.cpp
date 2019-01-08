@@ -58,8 +58,8 @@ void LAYER::compute()
             counter = 0;
         }
         if (forward_in.read()){
-            //cout << "FORWARD " << curr << endl;
-            //cout << prev << " " << curr << " " << next << endl;
+            cout << "FORWARD " << curr << endl;
+            cout << prev << " " << curr << " " << next << endl;
             input_v_flag = 1;
             was_request = 0;
             wait = 3;
@@ -117,7 +117,7 @@ void LAYER::compute()
         }
         // ~~~ //
         if (backward_in.read()){
-            //cout <<  "BACKWARD " << curr << endl;
+            cout <<  "BACKWARD " << curr << " " << prev << " " << next << endl;
             counter = 0;
             wait = 3;
             if (curr == LAYERS){
@@ -159,10 +159,10 @@ void LAYER::compute()
             }
             for (int i = 0; i < next; i++){
                 for (int j = 0; j < prev; j++){
-                    //cout << "was " << weights[i][j] << endl;
+                    cout << "was " << weights[i][j] << endl;
                     weights[i][j] += lrn_coef * my_deltas[i] * input[j];
-                    //cout << "now "<< weights[i][j] << endl;
-                    //cout << "delta "<< lrn_coef * my_deltas[i] * input[j] << endl << endl;
+                    cout << "now "<< weights[i][j] << endl;
+                    cout << "delta "<< lrn_coef * my_deltas[i] * input[j] << endl << endl;
                 }
             }
             cmp_last = 0;
@@ -171,7 +171,7 @@ void LAYER::compute()
             write_transmit_last = 1;
         }
         if (write_transmit_last){
-            shared_a = 2000 + (LAYERS - 2)*100 + counter;
+            shared_a = BACKPROP + (LAYERS - 2)*100 + counter;
             shared_d = transmit_deltas[counter];
             if (counter < prev){
                 //cout << "THIS " << transmit_deltas[counter] << " " << shared_d <<endl;
@@ -187,7 +187,7 @@ void LAYER::compute()
         }
         if (write_transmit_mid){
             if (curr > 1){
-                shared_a = 2000 + (curr -2)*100 + counter;
+                shared_a = BACKPROP + (curr -2)*100 + counter;
                 shared_d = transmit_deltas[counter];
                 if (counter < prev){
                     //cout << "THIS " << transmit_deltas[counter] << " " << shared_d <<endl;
@@ -218,7 +218,7 @@ void LAYER::compute()
         }
         //
         if (cmp_mid){
-            cout << "LAYER " << curr << endl;
+            //cout << "LAYER " << curr << endl;
             for (int i = 0; i < next; i++){
                 my_deltas[i] = recieved_deltas[i] * (1 - output[i]) * output[i];
                 // cout << recieved_deltas[i] << " " << (1 - output[i]) * output[i] << endl;
@@ -254,7 +254,7 @@ void LAYER::compute()
             // cout << "THIS IS "<< counter <<"RDELTA" << recieved_deltas[counter] << " " << shared_d <<endl;
             if (counter < next - 1){
                 counter++;
-                shared_a = 2000 + (curr - 1)*100 + counter;
+                shared_a = BACKPROP + (curr - 1)*100 + counter;
                 read_req.write(1);
                 write_req.write(0);
                 wait = 1;
@@ -268,7 +268,7 @@ void LAYER::compute()
             //cout << curr << endl;
             b_mid = 0;
             load_deltas = 1;
-            shared_a = 2000 + (curr - 1)*100;
+            shared_a = BACKPROP + (curr - 1)*100;
             read_req.write(1);
             write_req.write(0);
             wait = 1;

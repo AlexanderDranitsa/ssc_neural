@@ -75,6 +75,7 @@ int sc_main(int argc, char* argv[])
             next = cfg[i];
         }
         layers_arr[i] = new LAYER("layer", i + 1, prev, next);
+        cout << "CREATED " << i + 1 << " " << prev << " " << next << endl;
         layers_arr[i]->clk_i(clk);
         layers_arr[i]->write_req(write_bus[i+2]);
         layers_arr[i]->read_req(read_bus[i+2]);
@@ -89,16 +90,15 @@ int sc_main(int argc, char* argv[])
             layers_arr[i]->forward_out(forward_bus[i]);
             layers_arr[i]->forward_in(forward_bus[i - 1]);
         }
-        // // BACKPROP
         if (i == 0){
-            layers_arr[i]->backward_in(backprop_bus[LAYERS - 2]);
+            layers_arr[i]->backward_in(backprop_bus[0]);
             layers_arr[i]->backward_out(backward_done);
         } else if (i == LAYERS - 1){
-            layers_arr[i]->backward_out(backprop_bus[0]);
+            layers_arr[i]->backward_out(backprop_bus[i - 1]);
             layers_arr[i]->backward_in(backward_start);
         } else {
-            layers_arr[i]->backward_out(backprop_bus[i]);
-            layers_arr[i]->backward_in(backprop_bus[i - 1]);
+            layers_arr[i]->backward_out(backprop_bus[i - 1]);
+            layers_arr[i]->backward_in(backprop_bus[i]);
         }
     }
 
