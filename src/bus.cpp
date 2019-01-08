@@ -25,11 +25,11 @@ void BUS::transmit()
     for (int i = 0; i < LAYERS + 2; i++){
         // cout << "TRANSMIT" << i << "=" << in_req_write[i].read() << endl;
         if(in_req_read[i].read()){
-            cout << "BUS READ FROM MEM" << endl;
+            //cout << "BUS READ FROM MEM" << endl;
             is_read = 1;
             break;
         } else if (in_req_write[i].read()){
-            cout << "BUS WRITE TO MEM" << endl;
+            //cout << "BUS WRITE TO MEM" << endl;
             is_write = 1;
             break;
         }

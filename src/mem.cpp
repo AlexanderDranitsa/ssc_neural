@@ -38,9 +38,9 @@ void Mem::bus_read()
         int index = (shared_a % 100);
         int layer = (shared_a / 100) % 10;
         int mode  = (shared_a / 1000) % 10;
-        cout << "~MEM: READ INTO " << endl;
-        cout << "  -> addr: " << shared_a << endl;
-        cout << "  -> data: " << shared_d << endl;
+        // cout << "~MEM: READ INTO " << endl;
+        // cout << "  -> addr: " << shared_a << endl;
+        // cout << "  -> data: " << shared_d << endl;
         if (mode == 0){
             //cout << "REF" << endl;
             reference[index] = shared_d;
@@ -75,8 +75,8 @@ void Mem::bus_write()
             shared_d = backprop[layer][index];
         }
         shared_a |= 0xf000;
-        cout << "~MEM: WRITE OUT" << endl;
-        cout << "  -> addr: " << shared_a - 0xf000<< endl;
-        cout << "  -> data: " << shared_d << endl;
+        // cout << "~MEM: WRITE OUT" << endl;
+        // cout << "  -> addr: " << shared_a - 0xf000<< endl;
+        // cout << "  -> data: " << shared_d << endl;
     }
 }

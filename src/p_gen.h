@@ -21,10 +21,11 @@ SC_MODULE(P_GEN)
     void bus_write();
 
 private:
+    int rnd = 0;
     int flag_v = 0;
     int flag_r = 0;
     int counter = 0;
-    const int m_triangle[49] = {
+    const int m_triangle[INPUT_LENGTH] = {
         0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0,
@@ -33,7 +34,7 @@ private:
         0, 1, 1, 1, 1, 1, 0,
         0, 0, 0, 0, 0, 0, 0
     };
-    const int m_square[49] = {
+    const int m_square[INPUT_LENGTH] = {
         0, 0, 0, 0, 0, 0, 0,
         0, 1, 1, 1, 1, 1, 0,
         0, 1, 0, 0, 0, 1, 0,
@@ -42,7 +43,7 @@ private:
         0, 1, 1, 1, 1, 1, 0,
         0, 0, 0, 0, 0, 0, 0
     };
-    const int m_round[49] = {
+    const int m_round[INPUT_LENGTH] = {
         0, 0, 0, 0, 0, 0, 0,
         0, 0, 1, 1, 1, 0, 0,
         0, 1, 1, 0, 1, 1, 0,
@@ -51,7 +52,7 @@ private:
         0, 0, 1, 1, 1, 0, 0,
         0, 0, 0, 0, 0, 0, 0
     };
-    float fig[49];
+    float fig[INPUT_LENGTH];
     float ref[3] = {0};
 };
 

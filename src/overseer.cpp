@@ -27,7 +27,7 @@ OVERSEER::~OVERSEER()
 
 void OVERSEER::mainThread()
 {
-    for (int iters = 0; iters < 2; iters++){
+    for (int iters = 0; iters < SET_SIZE; iters++){
         get_pat.write(1);
         wait();
         get_pat.write(0);
@@ -62,6 +62,7 @@ void OVERSEER::mainThread()
         }
 
         cout << out[0] << " " << out[1] << " " << out[2] << " " << endl;
+        cout << ref[0] << " " << ref[1] << " " << ref[2] << " " << endl;
 
         float max_ref[2] = {0, ref[0]};
         float max_out[2] = {0, out[0]};
@@ -81,7 +82,7 @@ void OVERSEER::mainThread()
         cout << max_out[0] << " " << max_out[1] << endl;
 
         if (max_ref[0] != max_out[0]){
-            cout << "MISTAKE, START BACKPROP" << endl;
+            cout << ">>>>>> MISTAKE, START BACKPROP" << endl;
             bad++;
             backward_start.write(1);
             wait();
@@ -90,10 +91,12 @@ void OVERSEER::mainThread()
             while (backward_done.read() == 0){
                 wait();
             }
+            wait();
             cout << "FROM OVERSEER BCKWRD DONE " << endl<< endl<< endl;
         } else {
-            cout << "GOOD" << endl;
+            cout << ">>>>>>  GOOD" << endl;
             good++;
+            wait();
         }
     }
     cout << "GOOD = " << good << endl;
@@ -109,9 +112,9 @@ int OVERSEER::bus_read(int addr)
     req_read.write(0);
     wait();
 
-    cout << "OVERSEER: READ " << endl;
-    cout << "  -> addr: " << shared_a - 0xf000<< endl;
-    cout << "  -> data: " << shared_d << endl;
+    // cout << "OVERSEER: READ " << endl;
+    // cout << "  -> addr: " << shared_a - 0xf000<< endl;
+    // cout << "  -> data: " << shared_d << endl;
 }
 
 void OVERSEER::bus_write(int addr, float data)
@@ -123,7 +126,7 @@ void OVERSEER::bus_write(int addr, float data)
     wait();
     req_write.write(0);
     
-    cout << "OVERSEER: WRITE " << endl;
-    cout << "  -> addr: " << shared_a << endl;
-    cout << "  -> data: " << shared_d << endl;
+    // cout << "OVERSEER: WRITE " << endl;
+    // cout << "  -> addr: " << shared_a << endl;
+    // cout << "  -> data: " << shared_d << endl;
 }

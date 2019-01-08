@@ -33,10 +33,13 @@ SC_MODULE(LAYER)
     int addr_buf      = 0;
     int wait          = 0;
     bool load_ref     = 0;
+    bool load_deltas  = 0;
     bool cmp_last     = 0;
+    bool cmp_mid      = 0;
     bool compute_flag = 0;
     bool was_request  = 0;
-    bool write_transmit = 0;
+    bool write_transmit_mid = 0;
+    bool write_transmit_last = 0;
     //float accum = 0;
     float** weights   = new float*[next];
     float* my_deltas     = new float[next];
@@ -44,6 +47,7 @@ SC_MODULE(LAYER)
     float* input      = new float[prev];
     float* output     = new float[next];
     float* ref        = NULL;
+    float* recieved_deltas = NULL;
 
 private:
 };

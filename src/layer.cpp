@@ -28,6 +28,8 @@ LAYER::LAYER(sc_module_name nm, int curr, int prev, int next)
     }
     if (curr == LAYERS){
         ref = new float[LAYERS];
+    } else {
+        recieved_deltas = new float[next];
     }
 }
 
@@ -56,17 +58,18 @@ void LAYER::compute()
             counter = 0;
         }
         if (forward_in.read()){
-            cout << "FORWARD " << curr << endl;
-            cout << prev << " " << curr << " " << next << endl;
+            //cout << "FORWARD " << curr << endl;
+            //cout << prev << " " << curr << " " << next << endl;
             input_v_flag = 1;
             was_request = 0;
+            wait = 3;
         }
         if (was_request){
             if (shared_a == (0xf000 | addr_buf)){
                 shared_a -= 0xf000;
                 int index = (shared_a % 100);
                 input[index] = shared_d;
-                cout << "WROTE " << shared_d << " INTO " << shared_a << endl;
+                //cout << "WROTE " << shared_d << " INTO " << shared_a << endl;
                 was_request = 0;
                 counter++;
             }
@@ -114,17 +117,20 @@ void LAYER::compute()
         }
         // ~~~ //
         if (backward_in.read()){
-            cout <<  "BACKWARD " << curr << endl;
+            //cout <<  "BACKWARD " << curr << endl;
             counter = 0;
+            wait = 3;
             if (curr == LAYERS){
                 b_last++;
             } else {
+                //cout << "LAYER BWD" << curr <<" HERE" << endl;
                 b_mid++;
             }
         }
         if (load_ref){
-            ref[counter - 1] = shared_d;
-            if (counter < LAYERS){
+            //cout << "loading ref" << endl;
+            ref[counter] = shared_d;
+            if (counter < LAYERS - 1){
                 counter++;
                 shared_a = counter;
                 read_req.write(1);
@@ -132,51 +138,77 @@ void LAYER::compute()
                 wait = 1;
             } else {
                 load_ref = 0;
-                cmp_last++;
+                //cout << "REF? " <<ref[0] <<" " << ref[1]<<" "  << ref[2] << endl;
+                cmp_last = 1;
             }
         }
         if (cmp_last){
+            //cout << "LAYER " << curr << endl;
             for (int i = 0; i < next; i++){
                 my_deltas[i] = (ref[i] - output[i]) * (1 - output[i]) * output[i];
                 cout << my_deltas[i] << endl;
             }
-            cout << endl<< endl;
+            //cout << endl<< endl;
             for (int i = 0; i < prev; i++){
                 float accum = 0;
                 for (int j = 0; j < next; j++){
                     accum += my_deltas[j] * weights[j][i];
                 }
                 transmit_deltas[i] = accum;
-                //cout << transmit_deltas[i] << endl;
+                cout <<curr << " " << transmit_deltas[i] << endl;
             }
             for (int i = 0; i < next; i++){
                 for (int j = 0; j < prev; j++){
                     //cout << "was " << weights[i][j] << endl;
                     weights[i][j] += lrn_coef * my_deltas[i] * input[j];
                     //cout << "now "<< weights[i][j] << endl;
+                    //cout << "delta "<< lrn_coef * my_deltas[i] * input[j] << endl << endl;
                 }
             }
             cmp_last = 0;
             counter = 0;
             wait = 1;
-            write_transmit = 1;
+            write_transmit_last = 1;
         }
-        if (write_transmit){
+        if (write_transmit_last){
             shared_a = 2000 + (LAYERS - 2)*100 + counter;
             shared_d = transmit_deltas[counter];
             if (counter < prev){
-                cout << "THIS " << transmit_deltas[counter] << " " << shared_d <<endl;
+                //cout << "THIS " << transmit_deltas[counter] << " " << shared_d <<endl;
                 counter++;
                 write_req.write(1);
                 read_req.write(0);
                 wait = 1;
             } else {
-                write_transmit = 0;
+                write_transmit_last = 0;
+                counter = 0;
+                backward_out.write(1);
+            }
+        }
+        if (write_transmit_mid){
+            if (curr > 1){
+                shared_a = 2000 + (curr -2)*100 + counter;
+                shared_d = transmit_deltas[counter];
+                if (counter < prev){
+                    //cout << "THIS " << transmit_deltas[counter] << " " << shared_d <<endl;
+                    counter++;
+                    write_req.write(1);
+                    read_req.write(0);
+                    wait = 1;
+                } else {
+                    //cout << "~~~ BACK LAYER " << curr << "TRANSMIT OVER" << endl;
+                    write_transmit_mid = 0;
+                    counter = 0;
+                    backward_out.write(1);
+                }
+            } else {
+                write_transmit_mid = 0;
+                counter = 0;
                 backward_out.write(1);
             }
         }
         if (b_last){
-            cout << "LAST" << endl;
+            //cout << "LAST" << endl;
             load_ref = 1;
             shared_a = counter;
             read_req.write(1);
@@ -184,11 +216,62 @@ void LAYER::compute()
             wait = 1;
             b_last = 0;
         }
-        
+        //
+        if (cmp_mid){
+            cout << "LAYER " << curr << endl;
+            for (int i = 0; i < next; i++){
+                my_deltas[i] = recieved_deltas[i] * (1 - output[i]) * output[i];
+                // cout << recieved_deltas[i] << " " << (1 - output[i]) * output[i] << endl;
+                // cout << "my delta " << my_deltas[i] << endl;
+            }
+            //cout << endl<< endl;
+            if (curr > 1){
+                for (int i = 0; i < prev; i++){
+                float accum = 0;
+                for (int j = 0; j < next; j++){
+                    accum += my_deltas[j] * weights[j][i];
+                }
+                transmit_deltas[i] = accum;
+                cout <<curr << " " << transmit_deltas[i] << endl;
+            }
+            }
+            for (int i = 0; i < next; i++){
+                for (int j = 0; j < prev; j++){
+                    // cout << "was " << weights[i][j] << endl;
+                    weights[i][j] += lrn_coef * my_deltas[i] * input[j];
+                    // cout << "now "<< weights[i][j] << endl;
+                    // cout << "delta "<< lrn_coef * my_deltas[i] * input[j] << endl << endl;
+                }
+            }
+            cmp_mid = 0;
+            counter = 0;
+            wait = 1;
+            write_transmit_mid = 1;
+        }
+        //
+        if (load_deltas){
+            recieved_deltas[counter] = shared_d;
+            // cout << "THIS IS "<< counter <<"RDELTA" << recieved_deltas[counter] << " " << shared_d <<endl;
+            if (counter < next - 1){
+                counter++;
+                shared_a = 2000 + (curr - 1)*100 + counter;
+                read_req.write(1);
+                write_req.write(0);
+                wait = 1;
+            } else {
+                load_deltas = 0;
+                cmp_mid = 1;
+                wait = 1;
+            }
+        }
         if (b_mid){
-            cout << curr << endl;
+            //cout << curr << endl;
             b_mid = 0;
-            backward_out.write(1);
+            load_deltas = 1;
+            shared_a = 2000 + (curr - 1)*100;
+            read_req.write(1);
+            write_req.write(0);
+            wait = 1;
         }
     }
 }
